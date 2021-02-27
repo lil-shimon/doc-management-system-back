@@ -1,0 +1,75 @@
+.primary {
+  background-color: #3f51b5;
+}
+
+.primary :hover {
+  background-color: rgb(44, 56, 126);
+}
+
+.primary :disabled {
+  background-color: #115293 !important;
+}
+
+.info {
+  background-color: #2196f3;
+}
+
+.info :hover {
+  background-color: rgb(23, 105, 170);
+}
+
+.info :disabled {
+  background-color: #1976d2 !important;
+}
+
+.secondary {
+  background-color: #f50057;
+}
+
+.secondary :hover {
+  background-color: rgb(171, 0, 60);
+}
+
+.secondary :disabled {
+  background-color: #9a0036 !important;
+}
+
+.success {
+  background-color: #4caf50;
+}
+
+.success :hover {
+  background-color: rgb(53, 122, 56);
+}
+
+.success :disabled {
+  background-color: #388e3c !important;
+}
+
+.warning {
+  background-color: #ff9800;
+}
+
+.warning :hover {
+  background-color: rgb(178, 106, 0);
+}
+
+.warning :disabled {
+  background-color: #f57c00 !important;
+}
+
+.error {
+  background-color: #f44336;
+}
+
+.error :hover {
+  background-color: rgb(170, 46, 37);
+}
+
+.error :disabled {
+  background-color: #d32f2f !important;
+}
+
+.disabled {
+  color: white !important;
+}
