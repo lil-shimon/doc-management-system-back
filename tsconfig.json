@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "allowJs": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": [
+//    "./src/**/*",
+//    "templetes", "reducks", "pages/users/new.tsx", "pages/list.tsx", "pages/products/new.tsx", "pages/products/list.tsx", "pages/preview.tsx", "pages/new.tsx", "pages/list.tsx", "pages/mitsumori.tsx", "pages/index.tsx", "pages/create-document.tsx", "pages/company-logo.tsx"
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
