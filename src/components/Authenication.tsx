@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 
 import { RootState } from '../redux/rootReducers';
-import { getUserLogin } from '../redux/slicers/login';
+import { getRefreshToken, getUserLogin } from '../redux/slicers/login';
 
 export enum AuthMode {
   PRIVATE,
@@ -40,7 +40,7 @@ export default function Authenication({
         }
       } else if (mode === AuthMode.PRIVATE) {
         if (!loginData) {
-          router.push('/login');
+          dispatch(getRefreshToken())
         }
       }
     }
