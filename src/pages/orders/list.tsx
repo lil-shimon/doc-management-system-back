@@ -17,7 +17,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { OrderListsTable } from '../../components/organisms/OrderListsTable';
-import { paymentOrders } from '../../redux/slicers/Order';
+import { getOrders, paymentOrders } from '../../redux/slicers/Order';
 import SwipeableViews from 'react-swipeable-views';
 import OrderFifteenList from '../../components/organisms/OrderListsTable/OrderFifteenList';
 import OrderTwentyList from '../../components/organisms/OrderListsTable/OrderTwentyList';
@@ -103,8 +103,9 @@ export default function OrdersList() {
   const dispatch = useDispatch();
   const [searchWord, setSearchWord] = useState('');
 
-  const handleSearch = (e: { preventDefault: () => void }) => {
+  const handleSearch = (e: { preventDefault: () => void }, searchWord: string | null) => {
     e.preventDefault();
+    dispatch(getOrders(1, 'query', searchWord))
   };
 
   const handleChangePayment = (word: string) => {
@@ -158,8 +159,12 @@ export default function OrdersList() {
                       placeholder="案件を検索する"
                       onChange={e => setSearchWord(e.target.value)}
                     />
-                    <IconButton type="submit" className={classes.iconButton}>
-                      <SearchIcon />
+                    <IconButton
+                      type="submit"
+                      className={classes.iconButton}
+                      onClick={e => handleSearch(e, searchWord)}
+                    >
+                    <SearchIcon />
                     </IconButton>
                   </Paper>
                 </Grid>

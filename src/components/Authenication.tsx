@@ -28,6 +28,7 @@ export default function Authenication({
     if (!checked) {
       if (!loginData) {
         dispatch(getUserLogin());
+        dispatch(getRefreshToken())
       }
     }
   }, [checked]);
