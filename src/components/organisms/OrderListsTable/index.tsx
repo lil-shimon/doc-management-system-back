@@ -29,6 +29,35 @@ export const OrderListsTable: FC<{ searchWord: string }> = ({ searchWord }) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  //ソートのための初期ステート
+  const [idSort, setIdSort] = useState<string | null>(null);
+  const [company_nameSort, setCompanyNameSort] = useState<string | null>(null);
+  const [siteNameSort, setSiteNameSort] = useState<string | null>(null);
+  const [startDateSort, setStartDateSort] = useState<string | null>(null);
+  const [endDateSort, setEndDateSort] = useState<string | null>(null);
+  const [expectedStartDateSort, setExpectedStartDateSort] = useState<
+    string | null
+    >(null);
+  const [expectedEndDateSort, setExpectedEndDateSort] = useState<string | null>(
+    null
+  );
+  const [additionalInvoiceSort, setAdditionalInvoiceSort] = useState<
+    string | null
+    >(null);
+
+  //sortのためのhandle関数
+  const handleChangeIdSort = async () => {
+    await setLoading(true);
+    if (idSort !== 'id_asc') {
+      setIdSort('id_asc');
+      await dispatch(getOrders(1, 'order_by', 'id_asc'));
+    } else if (idSort === 'id_asc') {
+      setIdSort('id_desc');
+      await dispatch(getOrders(1, 'order_by', 'id_desc'));
+    }
+    await setLoading(false);
+  };
+
   const swapList = useCallback(
     (sourceIndex: number, targetIndex: number) => {
       //@ts-ignore
@@ -90,7 +119,12 @@ export const OrderListsTable: FC<{ searchWord: string }> = ({ searchWord }) => {
               <TableRow>
                 <TableCell className={classes.tableFile} />
                 <TableCell className={classes.tableFile} />
-                <TableCell className={classes.tableId}>No</TableCell>
+                <TableCell
+                  className={classes.tableId}
+                  onClick={() => handleChangeIdSort()}
+                >
+                  No
+                </TableCell>
                 <TableCell className={classes.tableName}>会社名</TableCell>
                 <TableCell className={classes.tableName}>
                   納入先/現場名
