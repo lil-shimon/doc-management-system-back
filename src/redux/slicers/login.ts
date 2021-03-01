@@ -3,6 +3,7 @@ import { API, saveLoginToken } from '../../api';
 import { getLoginData, saveLoginData } from '../../utils/auth';
 import { AppDispatch, AppThunk } from '../store';
 import { User } from './user';
+import { setFlashError } from './flash';
 
 export interface LoginState {
   data: User | null;
@@ -54,6 +55,28 @@ export const login = (email: string, password: string): AppThunk => async (
   } catch (err) {
     console.error(err);
     dispatch(setLoginData(null));
+  }
+};
+
+export const getRefreshToken = (): AppThunk => async (
+  dispatch: AppDispatch
+) => {
+  try {
+    const Auth = localStorage.getItem('jwt-token');
+    console.log('jwt-token', Auth);
+    const res = await API.post('/auth/refresh')
+      .setBody({ Auth })
+      .fetch();
+
+    saveLoginToken(res.data.access_token);
+
+    const { data: userData } = await API.post('/auth/me').fetch();
+
+    dispatch(setLoginData(userData));
+    dispatch(setCheckedLogin());
+  } catch (err) {
+    dispatch(setLoginData(null));
+    dispatch(setFlashError('ログイン情報の更新に失敗しました。'));
   }
 };
 

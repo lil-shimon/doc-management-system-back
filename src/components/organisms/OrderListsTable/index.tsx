@@ -29,6 +29,112 @@ export const OrderListsTable: FC<{ searchWord: string }> = ({ searchWord }) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  //ソートのための初期ステート
+  const [sort, setSort] = useState<string | null>(null);
+
+  //sortのためのhandle関数
+  const handleChangeIdSort = async () => {
+    await setLoading(true);
+    if (sort !== 'id_asc') {
+      setSort('id_asc');
+      await dispatch(getOrders(1, 'order_by', 'id_asc'));
+    } else if (sort === 'id_asc') {
+      setSort('id_desc');
+      await dispatch(getOrders(1, 'order_by', 'id_desc'));
+    }
+    await setLoading(false);
+  };
+
+  // company_name sortのためのhandle関数
+  const handleChangeCompanyNameSort = async () => {
+    await setLoading(true);
+    if (sort !== 'company_name_desc') {
+      setSort('company_name_desc');
+      await dispatch(getOrders(1, 'order_by', 'company_name_desc'));
+    } else if (sort === 'company_name_desc') {
+      setSort('company_name_asc');
+      await dispatch(getOrders(1, 'order_by', 'company_name_asc'));
+    }
+    await setLoading(false);
+  };
+  // site_name sortのためのhandle関数
+  const handleChangeSiteNameSort = async () => {
+    await setLoading(true);
+    if (sort !== 'site_name_desc') {
+      setSort('site_name_desc');
+      await dispatch(getOrders(1, 'order_by', 'site_name_desc'));
+    } else if (sort === 'site_name_desc') {
+      setSort('site_name_asc');
+      await dispatch(getOrders(1, 'order_by', 'site_name_asc'));
+    }
+    await setLoading(false);
+  };
+
+  // company_name sortのためのhandle関数
+  const handleChangeAdditionalInvoiceSort = async () => {
+    await setLoading(true);
+    if (sort !== 'additional_invoice_desc') {
+      setSort('additional_invoice_desc');
+      await dispatch(getOrders(1, 'order_by', 'additional_invoice_desc'));
+    } else if (sort === 'additional_invoice_desc') {
+      setSort('additional_invoice_asc');
+      await dispatch(getOrders(1, 'order_by', 'additional_invoice_asc'));
+    }
+    await setLoading(false);
+  };
+
+  // start_date sortのためのhandle関数
+  const handleChangeStartDateSort = async () => {
+    await setLoading(true);
+    if (sort !== 'start_date_desc') {
+      setSort('start_date_desc');
+      await dispatch(getOrders(1, 'order_by', 'start_date_desc'));
+    } else if (sort === 'start_date_desc') {
+      setSort('start_date_asc');
+      await dispatch(getOrders(1, 'order_by', 'start_date_asc'));
+    }
+    await setLoading(false);
+  };
+
+  // end_date sortのためのhandle関数
+  const handleChangeEndDateSort = async () => {
+    await setLoading(true);
+    if (sort !== 'end_date_desc') {
+      setSort('end_date_desc');
+      await dispatch(getOrders(1, 'order_by', 'end_date_desc'));
+    } else if (sort === 'end_date_desc') {
+      setSort('end_date_asc');
+      await dispatch(getOrders(1, 'order_by', 'end_date_asc'));
+    }
+    await setLoading(false);
+  };
+
+  // expected_start_date sortのためのhandle関数
+  const handleChangeExpectedStartDateSort = async () => {
+    await setLoading(true);
+    if (sort !== 'expected_start_date_desc') {
+      setSort('expected_start_date_desc');
+      await dispatch(getOrders(1, 'order_by', 'expected_start_date_desc'));
+    } else if (sort === 'expected_start_date_desc') {
+      setSort('expected_start_date_asc');
+      await dispatch(getOrders(1, 'order_by', 'expected_start_date_asc'));
+    }
+    await setLoading(false);
+  };
+
+  // expected_end_date sortのためのhandle関数
+  const handleChangeExpectedEndDateSort = async () => {
+    await setLoading(true);
+    if (sort !== 'expected_end_date_desc') {
+      setSort('expected_end_date_desc');
+      await dispatch(getOrders(1, 'order_by', 'expected_end_date_desc'));
+    } else if (sort === 'expected_end_date_desc') {
+      setSort('expected_end_date_asc');
+      await dispatch(getOrders(1, 'order_by', 'expected_end_date_asc'));
+    }
+    await setLoading(false);
+  };
+
   const swapList = useCallback(
     (sourceIndex: number, targetIndex: number) => {
       //@ts-ignore
@@ -90,17 +196,54 @@ export const OrderListsTable: FC<{ searchWord: string }> = ({ searchWord }) => {
               <TableRow>
                 <TableCell className={classes.tableFile} />
                 <TableCell className={classes.tableFile} />
-                <TableCell className={classes.tableId}>No</TableCell>
-                <TableCell className={classes.tableName}>会社名</TableCell>
-                <TableCell className={classes.tableName}>
+                <TableCell
+                  className={classes.tableId}
+                  onClick={() => handleChangeIdSort()}
+                >
+                  No
+                </TableCell>
+                <TableCell
+                  className={classes.tableName}
+                  onClick={() => handleChangeCompanyNameSort()}
+                >
+                  会社名
+                </TableCell>
+                <TableCell
+                  className={classes.tableName}
+                  onClick={() => handleChangeSiteNameSort()}
+                >
                   納入先/現場名
                 </TableCell>
-                <TableCell className={classes.tableItem}>現況</TableCell>
-                <TableCell className={classes.tableDate}>稼働日</TableCell>
-                <TableCell className={classes.tableDate}>終了日</TableCell>
-                <TableCell className={classes.tableDate}>稼働予定日</TableCell>
-                <TableCell className={classes.tableDate}>終了予定日</TableCell>
-                <TableCell className={classes.tableItem}>追加請求</TableCell>
+                <TableCell
+                  className={classes.tableDate}
+                  onClick={() => handleChangeStartDateSort()}
+                >
+                  稼働日
+                </TableCell>
+                <TableCell
+                  className={classes.tableDate}
+                  onClick={() => handleChangeEndDateSort()}
+                >
+                  終了日
+                </TableCell>
+                <TableCell
+                  className={classes.tableDate}
+                  onClick={() => handleChangeExpectedStartDateSort()}
+                >
+                  稼働予定日
+                </TableCell>
+                <TableCell
+                  className={classes.tableDate}
+                  onClick={() => handleChangeExpectedEndDateSort()}
+                >
+                  終了予定日
+                </TableCell>
+                <TableCell
+                  className={classes.tableItem}
+                  onClick={() => handleChangeAdditionalInvoiceSort()}
+                >
+                  追加請求
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

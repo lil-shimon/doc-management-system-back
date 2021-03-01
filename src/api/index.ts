@@ -34,7 +34,7 @@ const get = (path: string, params: string[] = [], query: string[][] = []) => {
       }
       return axios.get(`${API_URL}${path}${pathParams}`, {
         params: query.reduce((hs: Record<string, string>, param: string[]) => {
-          hs[param[0]] = param[1];
+          hs[param[0]] = param[1], hs[param[2]] = param[3z];
           return hs;
         }, {}),
       });

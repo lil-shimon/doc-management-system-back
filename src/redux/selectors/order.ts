@@ -69,3 +69,11 @@ export const getListDocIdArray = createSelector(
     return Object.values(docIdArray);
   }
 );
+
+//ページの場所を取得
+export const getOrderUrl = createSelector(
+  (state: RootState) => state.orderState.url,
+  url => {
+    return url;
+  }
+);
