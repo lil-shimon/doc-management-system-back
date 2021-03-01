@@ -55,6 +55,7 @@ export interface OrderState {
   orderById: Record<number, OrderById>;
   docIdArray: Record<number, Order>;
   pagination: Pagination;
+  url: string | null
 }
 
 export const orderInitialState: OrderState = {
@@ -71,6 +72,7 @@ export const orderInitialState: OrderState = {
     current_page: 1,
     last_page: 1,
   },
+  url: null
 };
 
 const orderSlice = createSlice({
@@ -80,6 +82,9 @@ const orderSlice = createSlice({
     setOrders: (state: OrderState, { payload }: PayloadAction<Order[]>) => {
       //@ts-ignore
       state.indexes = payload['data'];
+    },
+    setUrl: (state: OrderState, { payload }: PayloadAction<string | null>) => {
+      state.url = payload;
     },
     setOrderPagination(
       state,
@@ -140,6 +145,7 @@ export const {
   setOrderById,
   setDocIdArrayByOrder,
   setOrderPagination,
+  setUrl
 } = orderSlice.actions;
 
 export default orderSlice.reducer;
@@ -148,21 +154,36 @@ export default orderSlice.reducer;
 export const getOrders = (
   currentPage: number,
   query?: string | null,
-  queryWord?: string | null
+  queryWord?: string | null,
+  orderBy?: string | null,
+  orderByWord?: string | null
 ): AppThunk => async (dispatch: AppDispatch) => {
   try {
-    const { data } = await API.get(
+    console.log('query word', queryWord);
+    console.log('order by word', orderByWord);
+    const res = await API.get(
       '/order',
       [`?page=${currentPage}`],
-      [[`${query}`, `${queryWord}`]]
+      [[`${query}`, `${queryWord}`, `${orderBy}`, `${orderByWord}`]]
     ).fetch();
-    dispatch(setOrders(data));
-    dispatch(setLastPage(data));
+    if (queryWord == '15日') {
+      dispatch(setFifteens(res.data));
+    } else if (queryWord == '20日') {
+      dispatch(setTwenties(res.data));
+    } else if (queryWord == '25日') {
+      dispatch(setTwentyFives(res.data));
+    } else if (queryWord == '月末') {
+      dispatch(setLasts(res.data));
+    } else {
+      dispatch(setOrders(res.data));
+    }
+    dispatch(setUrl(queryWord));
+    dispatch(setLastPage(res.data));
     dispatch(
       setOrderPagination({
-        total: data.total,
-        current_page: data.current_page,
-        last_page: data.last_page,
+        total: res.data.total,
+        current_page: res.data.current_page,
+        last_page: res.data.last_page,
       })
     );
   } catch (err) {
@@ -246,60 +267,116 @@ export const storeOrder = (
   expected_end_date: Blob | string | any,
   user_id: Blob | string,
   company_name: Blob | string | any,
-  site_name: Blob | string,
-  phone_number: Blob | string,
-  site_representative: Blob | string,
-  site_representative_phone: Blob | string,
-  site_mail: Blob | string,
-  site_address: Blob | string,
-  condition_name: Blob | string,
-  payment: string | Blob,
-  note: string | Blob,
-  sub_total: string | Blob,
-  quotation: string | Blob,
-  invoice: string | Blob,
-  claim: string | Blob,
-  order_date: string | Blob,
-  invoice_note: string | Blob,
-  sale_note: string | Blob,
-  maintainance_note: string | Blob,
-  signnage_id: string | Blob,
-  additional_invoice: string | Blob,
-  file_path: string | Blob,
-  file_path_two: string | Blob,
-  file_path_three: string | Blob
+  site_name: Blob | string | any,
+  phone_number: Blob | string | any,
+  site_representative: Blob | string | any,
+  site_representative_phone: Blob | string | any,
+  site_mail: Blob | string | any,
+  site_address: Blob | string | any,
+  condition_name: Blob | string | any,
+  payment: string | Blob | any,
+  note: string | Blob | any,
+  sub_total: string | Blob | any,
+  quotation: string | Blob | any,
+  invoice: string | Blob | any,
+  claim: string | Blob | any,
+  order_date: string | Blob | any,
+  invoice_note: string | Blob | any,
+  sale_note: string | Blob | any,
+  maintainance_note: string | Blob | any,
+  signnage_id: string | Blob | any,
+  additional_invoice: string | Blob | any,
+  file_path: string | Blob | any,
+  file_path_two: string | Blob | any,
+  file_path_three: string | Blob | any
 ): AppThunk => async (dispatch: AppDispatch) => {
   try {
     const params = new FormData();
     // params.append('_method', 'put');
-    params.append('start_date', start_date);
-    params.append('end_date', end_date);
-    params.append('expected_start_date', expected_start_date);
-    params.append('expected_end_date', expected_end_date);
-    params.append('user_id', user_id);
-    params.append('company_name', company_name);
-    params.append('site_name', site_name);
-    params.append('phone_number', phone_number);
-    params.append('site_representative', site_representative);
-    params.append('site_representative_phone', site_representative_phone);
-    params.append('site_mail', site_mail);
-    params.append('site_address', site_address);
-    params.append('condition_name', condition_name);
-    params.append('payment', payment);
-    params.append('order_date', order_date);
-    params.append('note', note);
-    params.append('quotation', quotation);
-    params.append('invoice', invoice);
-    params.append('sub_total', sub_total);
-    params.append('claim', claim);
-    params.append('invoice_note', invoice_note);
-    params.append('sale_note', sale_note);
-    params.append('maintainance_note', maintainance_note);
-    params.append('signnage_id', signnage_id);
-    params.append('additional_invoice', additional_invoice);
-    params.append('file_path', file_path);
-    params.append('file_path_two', file_path_two);
-    params.append('file_path_three', file_path_three);
+    if (start_date != null) {
+      params.append('start_date', start_date);
+    }
+    if (end_date != null) {
+      params.append('end_date', end_date);
+    }
+    if (expected_start_date != null) {
+      params.append('expected_start_date', expected_start_date);
+    }
+    if (expected_end_date != null) {
+      params.append('expected_end_date', expected_end_date);
+    }
+    if (user_id != null) {
+      params.append('user_id', user_id);
+    }
+    if (company_name != null) {
+      params.append('company_name', company_name);
+    }
+    if (site_mail != null) {
+      params.append('site_name', site_name);
+    }
+    if (phone_number != null) {
+      params.append('phone_number', phone_number);
+    }
+    if (site_representative != null) {
+      params.append('site_representative', site_representative);
+    }
+    if (site_representative_phone != null) {
+      params.append('site_representative_phone', site_representative_phone);
+    }
+    if (site_mail != null) {
+      params.append('site_mail', site_mail);
+    }
+    if (site_address != null) {
+      params.append('site_address', site_address);
+    }
+    if (condition_name != null) {
+      params.append('condition_name', condition_name);
+    }
+    if (payment != null) {
+      params.append('payment', payment);
+    }
+    if (order_date != null) {
+      params.append('order_date', order_date);
+    }
+    if (note != null) {
+      params.append('note', note);
+    }
+    if (quotation != null) {
+      params.append('quotation', quotation);
+    }
+    if (invoice != null) {
+      params.append('invoice', invoice);
+    }
+    if (sub_total != null) {
+      params.append('sub_total', sub_total);
+    }
+    if (claim != null) {
+      params.append('claim', claim);
+    }
+    if (invoice_note != null) {
+      params.append('invoice_note', invoice_note);
+    }
+    if (sale_note != null) {
+      params.append('sale_note', sale_note);
+    }
+    if (maintainance_note != null) {
+      params.append('maintainance_note', maintainance_note);
+    }
+    if (signnage_id != null) {
+      params.append('signnage_id', signnage_id);
+    }
+    if (additional_invoice != null) {
+      params.append('additional_invoice', additional_invoice);
+    }
+    if (file_path != null) {
+      params.append('file_path', file_path);
+    }
+    if (file_path_two != null) {
+      params.append('file_path_two', file_path_two);
+    }
+    if (file_path_three != null) {
+      params.append('file_path_three', file_path_three);
+    }
     const res = await API.post(`/order`)
       .setBody(params)
       .fetch();
@@ -316,64 +393,116 @@ export const updateOrder = (
   expected_end_date: Blob | string | any,
   user_id: Blob | string,
   company_name: Blob | string | any,
-  site_name: Blob | string,
-  phone_number: Blob | string,
-  site_representative: Blob | string,
-  site_representative_phone: Blob | string,
-  site_mail: Blob | string,
-  site_address: Blob | string,
-  condition_name: Blob | string,
-  payment: string | Blob,
-  note: string | Blob,
-  sub_total: string | Blob,
-  quotation: string | Blob,
-  invoice: string | Blob,
-  claim: string | Blob,
-  order_date: string | Blob,
-  invoice_note: string | Blob,
-  sale_note: string | Blob,
-  maintainance_note: string | Blob,
-  signnage_id: string | Blob,
-  additional_invoice: string | Blob,
-  file_path: string | Blob,
-  file_path_two: string | Blob,
-  file_path_three: string | Blob,
+  site_name: Blob | string | any,
+  phone_number: Blob | string | any,
+  site_representative: Blob | string | any,
+  site_representative_phone: Blob | string | any,
+  site_mail: Blob | string | any,
+  site_address: Blob | string | any,
+  condition_name: Blob | string | any,
+  payment: string | Blob | any,
+  note: string | Blob | any,
+  sub_total: string | Blob | any,
+  quotation: string | Blob | any,
+  invoice: string | Blob | any,
+  claim: string | Blob | any,
+  order_date: string | Blob | any,
+  invoice_note: string | Blob | any,
+  sale_note: string | Blob | any,
+  maintainance_note: string | Blob | any,
+  signnage_id: string | Blob | any,
+  additional_invoice: string | Blob | any,
+  file_path: string | Blob | any,
+  file_path_two: string | Blob | any,
+  file_path_three: string | Blob | any,
   id: number
 ): AppThunk => async (dispatch: AppDispatch) => {
   try {
     console.log('quotation', quotation);
     const params = new FormData();
-    params.append('_method', 'put');
-    params.append('start_date', start_date);
-    params.append('end_date', end_date);
-    params.append('expected_start_date', expected_start_date);
-    params.append('expected_end_date', expected_end_date);
-    params.append('user_id', user_id);
-    params.append('company_name', company_name);
-    params.append('site_name', site_name);
-    params.append('phone_number', phone_number);
-    params.append('site_representative', site_representative);
-    params.append('site_representative_phone', site_representative_phone);
-    params.append('site_mail', site_mail);
-    params.append('site_address', site_address);
-    params.append('condition_name', condition_name);
-    params.append('payment', payment);
-    params.append('order_date', order_date);
-    params.append('note', note);
-    params.append('quotation', quotation);
-    params.append('invoice', invoice);
-    params.append('sub_total', sub_total);
-    params.append('claim', claim);
-    params.append('invoice_note', invoice_note);
-    params.append('sale_note', sale_note);
-    params.append('maintainance_note', maintainance_note);
-    params.append('signnage_id', signnage_id);
-    params.append('additional_invoice', additional_invoice);
-    params.append('file_path', file_path);
-    params.append('file_path_two', file_path_two);
-    params.append('file_path_three', file_path_three);
-    if (quotation !== null) {
+    if (start_date != null) {
+      params.append('start_date', start_date);
     }
+    if (end_date != null) {
+      params.append('end_date', end_date);
+    }
+    if (expected_start_date != null) {
+      params.append('expected_start_date', expected_start_date);
+    }
+    if (expected_end_date != null) {
+      params.append('expected_end_date', expected_end_date);
+    }
+    if (user_id != null) {
+      params.append('user_id', user_id);
+    }
+    if (company_name != null) {
+      params.append('company_name', company_name);
+    }
+    if (site_name != null) {
+      params.append('site_name', site_name);
+    }
+    if (phone_number != null) {
+      params.append('phone_number', phone_number);
+    }
+    if (site_representative != null) {
+      params.append('site_representative', site_representative);
+    }
+    if (site_representative_phone != null) {
+      params.append('site_representative_phone', site_representative_phone);
+    }
+    if (site_mail != null) {
+      params.append('site_mail', site_mail);
+    }
+    if (site_address != null) {
+      params.append('site_address', site_address);
+    }
+    if (condition_name != null) {
+      params.append('condition_name', condition_name);
+    }
+    if (payment != null) {
+      params.append('payment', payment);
+    }
+    if (order_date != null) {
+      params.append('order_date', order_date);
+    }
+    if (note != null) {
+      params.append('note', note);
+    }
+    if (quotation != null) {
+      params.append('quotation', quotation);
+    }
+    if (invoice != null) {
+      params.append('invoice', invoice);
+    }
+    if (sub_total != null) {
+      params.append('sub_total', sub_total);
+    }
+    if (claim != null) {
+      params.append('claim', claim);
+    }
+    if (invoice_note != null) {
+      params.append('invoice_note', invoice_note);
+    }
+    if (sale_note != null) {
+      params.append('sale_note', sale_note);
+    }
+    if (maintainance_note != null) {
+      params.append('maintainance_note', maintainance_note);
+    }
+    if (signnage_id != null) {
+      params.append('signnage_id', signnage_id);
+    }
+    if (additional_invoice != null) {
+      params.append('additional_invoice', additional_invoice);
+    }
+    if (file_path != null) {
+      params.append('file_path', file_path);
+    }
+    if (file_path_two != null) {
+      params.append('file_path_two', file_path_two);
+    }
+    if (file_path_three != null) {
+      params.append('file_path_three', file_path_three);
     const res = await API.post(`/order/${id}`)
       .setBody(params)
       .fetch();

@@ -15,7 +15,6 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { OrderListsTable } from '../../components/organisms/OrderListsTable';
 import { getOrders, paymentOrders } from '../../redux/slicers/Order';
 import SwipeableViews from 'react-swipeable-views';
@@ -29,6 +28,8 @@ import FlashMessageSystem from '../../components/molecules/FlashSystem';
 import ErrorMessage from '../../components/organisms/ErrorMessage';
 import CreateIcon from '@material-ui/icons/Create';
 import { useRouter } from 'next/router';
+import { getOrderUrl } from '../../redux/selectors/order';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 const UseStyles = makeStyles(theme => ({
   drawerContainer: {
@@ -102,6 +103,7 @@ export default function OrdersList() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [searchWord, setSearchWord] = useState('');
+  const url = useSelector(getOrderUrl, shallowEqual);
 
   const handleSearch = (e: { preventDefault: () => void }, searchWord: string | null) => {
     e.preventDefault();
